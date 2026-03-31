@@ -107,12 +107,19 @@ class ExtractorApp:
         drop_frame.pack(fill="x", padx=10, pady=10)
         drop_frame.pack_propagate(False)
 
-        drop_label = Label(drop_frame, text="拖拽.3mf文件到这里", bg="#e0e0e0", font=("Arial", 12))
+        drop_label = Label(drop_frame, text="拖拽.3mf文件到这里 或 点击下方按钮选择文件", bg="#e0e0e0", font=("Arial", 12))
         drop_label.pack(expand=True)
 
         # 注册拖拽
         self.root.drop_target_register(DND_FILES)
         self.root.dnd_bind('<<Drop>>', self.on_drop)
+
+        # 文件选择按钮
+        btn_frame = Frame(self.root)
+        btn_frame.pack(fill="x", padx=10, pady=5)
+
+        Button(btn_frame, text="选择文件", command=self.select_files).pack(side="left", padx=5)
+        Button(btn_frame, text="清空列表", command=self.clear_list).pack(side="left")
 
         # 文件列表
         list_frame = Frame(self.root)
@@ -161,6 +168,23 @@ class ExtractorApp:
                         if GcodeExtractor.validate_3mf(full_path) and full_path not in self.file_list:
                             self.file_list.append(full_path)
                             self.listbox.insert("end", os.path.basename(full_path))
+
+    def select_files(self):
+        """通过文件选择框选择.3mf文件"""
+        files = filedialog.askopenfilenames(
+            title="选择.3mf文件",
+            filetypes=[("3MF files", "*.3mf"), ("All files", "*.*")]
+        )
+        for file_path in files:
+            if GcodeExtractor.validate_3mf(file_path) and file_path not in self.file_list:
+                self.file_list.append(file_path)
+                self.listbox.insert("end", os.path.basename(file_path))
+
+    def clear_list(self):
+        """清空文件列表"""
+        self.file_list.clear()
+        self.listbox.delete(0, "end")
+
 
     def select_output(self):
         """选择输出目录"""
