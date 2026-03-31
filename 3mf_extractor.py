@@ -90,7 +90,7 @@ class ExtractorApp:
     def __init__(self, root):
         self.root = root
         self.root.title("3MF Gcode提取工具")
-        self.root.geometry("600x400")
+        self.root.geometry("600x500")
 
         self.file_list = []
         self.output_dir = os.getcwd()
